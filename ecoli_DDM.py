@@ -66,9 +66,14 @@ for i in arange(sub_mean.shape[0]):
             taus_var[i,j] = pcov[1,1]
             amps[i,j] = popt[0]
             taus[i,j] = 1/popt[1]
-        
-hp.save(outfolder+'amplitude.tif', amps)
-hp.save(outfolder+'tau.tif', taus)
+
+amps = amps/amps.max()
+
+hp.show(amps)
+savefig(outfolder+'amplitude.tif' )
+hp.show(taus)
+savefig(outfolder+'tau.tif' )
+
     
     
     
