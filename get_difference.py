@@ -1,4 +1,4 @@
-def get_difference_fits(filepath, outfolder = None, delta_t = 1, constscalingsave = True, crop=[None,None,None,None,None,None], return_difference = False, return_header = False, abssq = False):
+def get_difference_fits(filepath, delta_ts, outfolder = None, constscalingsave = True, crop=[None,None,None,None,None,None], return_difference = False, return_header = False, abssq = False):
     
     import numpy as np
     import pyfits as ft
@@ -37,29 +37,33 @@ def get_difference_fits(filepath, outfolder = None, delta_t = 1, constscalingsav
 
 
     #initialize difference array
-    difference = np.empty( (data.shape[1],data.shape[2], data.shape[0]-delta_t) )
+    difference = np.zeros( (data.shape[1],data.shape[2], data.shape[0]-delta_ts.min(), delta_ts.shape[0]) )
 
-    #loop through each image
-    for i in np.arange(0,data.shape[0]-delta_t):
-        result = data[i+delta_t,:,;] - data[i,:,:]
-        
-        if abssq:
-            result = abs(result)**2
+    for j in np.arange(0,delta_ts.shape[0]):
+        delta_t = delta_ts[j]
+        print('delta_t='+str(delta_t))
+
+        #loop through each image
+        for i in np.arange(0,data.shape[0]-delta_t):
+            result = data[i+delta_t,:,:] - data[i,:,:]
             
-        difference[:,:,i] = np.array(result)
-        
-    
+            if abssq:
+                result = abs(result)**2
+                
+            difference[:,:,i,j] = np.array(result)
+            
 
-    if constscalingsave:
-        im_max = difference.max()
-        im_min = difference.min()
-    else:
-        im_max = None
-        im_min = None
-        
-    if outfolder != None:
-        for i in np.arange(0,difference.shape[-1]):
-            A_imsave(outfolder + 'difference_image' + str(i).zfill(5) +'.tif', difference[:,:,i], im_max, im_min)
+
+        if constscalingsave:
+            im_max = difference.max()
+            im_min = difference.min()
+        else:
+            im_max = None
+            im_min = None
+            
+        if outfolder != None:
+            for i in np.arange(0,difference.shape[2]):
+                A_imsave(outfolder + 'delta_t_'+str(delta_t).zfill(5)+'image' + str(i).zfill(5) +'.tif', difference[:,:,i,j], im_max, im_min)
 
     if return_difference:
         if return_header:
