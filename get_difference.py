@@ -41,7 +41,7 @@ def get_difference_fits(filepath, delta_ts, outfolder = None, constscalingsave =
 
     for j in np.arange(0,delta_ts.shape[0]):
         delta_t = delta_ts[j]
-        print('delta_t='+str(delta_t))
+        print('timestep '+str(delta_t) + ' of ' + str(delta_ts.shape[0]))
 
         #loop through each image
         for i in np.arange(0,data.shape[0]-delta_t):
